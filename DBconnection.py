@@ -65,6 +65,24 @@ class DBconnection:
 			print("Connection not established")
 
 
+	def extra_zookeeper_details_by_id(self,id):
+		""" select zookeeper connection info based on id from CONNECTION_DETAILS table"""
+		command = (
+			"""
+			SELECT * FROM CONNECTION_DETAILS WHERE id =  %s
+			""")		
+		if (self.conn):
+			try:
+				self.cur.execute(command,(id))
+				record = self.cur.fetchall()
+				return record[3]
+			except Exception as ex:
+				print (str(ex))
+		else:
+			print("Connection not established")
+
+
+
 
 if __name__ == "__main__":
 	db = DBconnection()
