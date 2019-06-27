@@ -65,7 +65,7 @@ class DBconnection:
 			print("Connection not established")
 
 
-	def extra_zookeeper_details_by_id(self,id):
+	def extract_zookeeper_details_by_id(self,id):
 		""" select zookeeper connection info based on id from CONNECTION_DETAILS table"""
 		command = (
 			"""
@@ -81,15 +81,27 @@ class DBconnection:
 		else:
 			print("Connection not established")
 
+	def record_processing(self):
+		out ={}
+		if (self.conn):
+			records = self.select_pending_entries()
+			while records:
+				record = records.pop()
+				id, topic_name, replicas, partition = record[0], record[1], record[2], record[3]
+				zoo_conn = self.extract_zookeeper_details_by_id(id)
+				out[id] = [topic_name,replicas, partition, zoo_conn]
+				self.update_pending_entry_to_success(id)
+			return out
+		else:
+			print("connection not established")
 
 
 
-if __name__ == "__main__":
-	db = DBconnection()
-	db.connect()
-	db.update_pending_entry_to_success(1)
-	records = db.select_pending_entries()
-	print(records)
+
+
+
+
+
 
 
 
